@@ -8,7 +8,7 @@ description
 from tkinter import *
 from tkinter import ttk, filedialog
 from os import mkdir, path
-from assets.themes import themes 
+from json import *
 
 #creating the gui
 #creating the window seetings
@@ -24,6 +24,42 @@ root.minsize(240, 200)
 # be super careful with memory usage, python is not great at doing big projects and uses alot of memory (shrink things down)
 # tkinter is somewhat limiting, might be a issue for some features
 # terminal is in every modern IDE, i already dont like how stressful that sounds to implement
+
+########################Initalising Colours######################
+# scans the themes class and adds a theme if the submodule class name starts with "theme"
+# Not very efficient and very messy but works
+
+# Loads JSON data
+themeNames = ""
+with open('assets/themes/themes.json') as f:
+    themesData = load(f)
+
+themeNames = themesData['Names']
+themeNames = themeNames.split(',')
+
+# Redefines the colours used in the styles
+def StyleDefine(style):
+    color1 = style['Color1']
+    color2 = style['Color2']
+    color3 = style['Color3']
+    color4 = style['Color4']
+    color5 = style['Color5']
+
+    return color1, color2, color3, color4, color5
+
+# Takes the button number and finds the theme inside the theme data
+def SetColours():
+    x = int(themeNumber.get())
+    themeName = themeNames[x]
+    theme = themesData[themeName]
+    StyleDefine(theme)
+
+s = ttk.Style()
+color1 = color2 = color3 = color4 = color5 = "" 
+
+s.configure('Notebook', foreground=color1, background=color2)
+
+
 
 #########################creating toolbar########################
 toolBar = Menu(root)
@@ -139,14 +175,16 @@ viewMenu.add_checkbutton(label="Enable Mark Errors")
 viewMenu.add_command(label="Create Editor Theme", command=vm.createEditorTheme)
 viewMenu.add_command(label="Import Editor Theme", command=vm.importEditorTheme)
 
-## not sure
-themeChoice = StringVar(root)
 
-colorThemes = themes.colorThemes
+# Generating the editor themes out of themes.py
+themeNumber = StringVar()
 
-for theme in colorThemes:
-    editorTheme.add_radiobutton(label=theme, variable=themeChoice)
-## not sure
+#themeName = themeNames.pop(0)
+i = 0
+for theme in themeNames:
+    editorTheme.add_radiobutton(label=theme[5:], variable=themeNumber, value=str(i), command=SetColours)
+    i += 1
+
 
 #creating commands for prefrences menu
 class PrefrencesMenu():
@@ -212,10 +250,10 @@ helpMenu = Menu(toolBar, tearoff=False)
 
 helpMenu.add_command(label="Help", accelerator="Ctrl+Shift+H", command=hm.popupHelp)
 helpMenu.add_command(label="How to get started?", accelerator="Ctrl+Shift+W", command=hm.openWelcomeFile)
-helpMenu.add_command(label="What is OpenCode ?", command=hm.openExplanationFile)
-helpMenu.add_command(label="How can i contribute?", command=hm.openContributeFile)
+helpMenu.add_command(label="What is OpenCode?", command=hm.openExplanationFile)
+helpMenu.add_command(label="How can I contribute?", command=hm.openContributeFile)
 helpMenu.add_command(label="How to create editor themes?", command=hm.openContributeFile)
-helpMenu.add_command(label="How to create extension?", command=hm.openContributeFile)
+helpMenu.add_command(label="How to create an extension?", command=hm.openContributeFile)
 
 #adding all the menus to the toolbar
 toolBar.add_cascade(label="File", menu=fileMenu)
@@ -246,7 +284,7 @@ root.config(menu = toolBar)
 
 #########################creating NotePad########################
 #creating tabs
-tabs = ttk.Notebook(root)
+tabs = ttk.Notebook(root, style='notebook')
 tabs.pack(pady=10)
 Tabs = {}
 Notepads = {}

@@ -1,0 +1,19 @@
+{
+    "Names" : "Light,Dark",
+
+    "Light" : {
+        "Color1": "#ffffff",
+        "Color2": "#000000",
+        "Color3": "#1d1d1d",
+        "Color4": "#ffffff",
+        "Color5": "#ffffff"
+    },
+
+    "Dark" : {
+        "Color1": "#1d1d1d",
+        "Color2": "#ffffff",
+        "Color3": "#2d2d2d",
+        "Color4": "#3f3f3f",
+        "Color5": "#1d1d1d"
+    } 
+}
