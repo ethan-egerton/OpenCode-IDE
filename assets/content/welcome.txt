@@ -1,15 +1,13 @@
 OpenCode-IDE
-=====
 
-### __What is OpenCode?__
+What is OpenCode?
 OpenCode is an open source text editor made by Ivri Korem, relying on community and the open-source culture. 
 
-### __How can I contribute?__
+How can I contribute?
 You can create extensions, Editor Themes and improve the source code by suggesting issues or making PRs on issues.
 
-### __How can to get started?__
+How can to get started?
 You can go to file menu and create new file, and just start coding.
 
----
+Happy coding!
 
-## Happy coding!

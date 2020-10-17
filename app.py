@@ -1,33 +1,32 @@
-#ivri korem 2020
 """
+Ivri Korem 2020
 description
 """
 
-#init
-#import
+# TODO Don't use this line, make sure all submodules are included and not through *
+# Though doing this is a pain in the ass
 from tkinter import *
 from tkinter import ttk, filedialog
 from os import mkdir, path
-from json import *
+from json import load
+from scripts.StyleDefine import StyleDefine
 
-#creating the gui
-#creating the window seetings
+# GUI init
 root = Tk()
 root.title("OpenCode - IDE")
+# TODO Get icon
 #root.iconbitmap(" ")
-root.geometry("1800x3500")
+root.geometry("1000x750")
 root.minsize(240, 200)
 #root.attributes("-fullscreen", True)
 
 # NOTE suggestions
 # split things up into different files, makes code more managable
-# be super careful with memory usage, python is not great at doing big projects and uses alot of memory (shrink things down)
+# be super careful with memory usage, python is not great at doing big projects and uses a lot of memory (shrink things down)
 # tkinter is somewhat limiting, might be a issue for some features
-# terminal is in every modern IDE, i already dont like how stressful that sounds to implement
 
-########################Initalising Colours######################
-# scans the themes class and adds a theme if the submodule class name starts with "theme"
-# Not very efficient and very messy but works
+#################### Initalising Colors ####################
+# Takes the JSON and finds the names data, uses that as a reference for what data to call corresponding to the button
 
 # Loads JSON data
 themeNames = ""
@@ -37,38 +36,29 @@ with open('assets/themes/themes.json') as f:
 themeNames = themesData['Names']
 themeNames = themeNames.split(',')
 
-# Redefines the colours used in the styles
-def StyleDefine(style):
-    color1 = style['Color1']
-    color2 = style['Color2']
-    color3 = style['Color3']
-    color4 = style['Color4']
-    color5 = style['Color5']
+# Redefines the colors used in the styles
 
-    return color1, color2, color3, color4, color5
 
 # Takes the button number and finds the theme inside the theme data
-def SetColours():
+def SetColors():
     x = int(themeNumber.get())
     themeName = themeNames[x]
     theme = themesData[themeName]
     StyleDefine(theme)
 
-s = ttk.Style()
-color1 = color2 = color3 = color4 = color5 = "" 
+theme = themesData["Light"]
+StyleDefine(theme)
 
-s.configure('Notebook', foreground=color1, background=color2)
+#------------------- Ending Colors -------------------#
 
 
+#################### Creating Toolbar ####################
 
-#########################creating toolbar########################
+# Init toolbar
 toolBar = Menu(root)
 
-#creating menus
-#creating commands for file menu
 
-
-#TODO: use tk.filedialog, doing any with files creates them inside the repo, not ideal
+# Creating commands for file menu
 class FileMenu():
     def CreateNewFile(self):
         fileLocation = filedialog.asksaveasfilename() # it probably doesnt even need to save, just create the new tab
@@ -112,7 +102,7 @@ class FileMenu():
 
 fm = FileMenu()
 
-#creating file menu
+# Creating file menu
 fileMenu = Menu(toolBar, tearoff=False)
 
 fileMenu.add_command(label="New File", accelerator="Ctrl+N", command=fm.CreateNewFile)
@@ -124,7 +114,7 @@ fileMenu.add_command(label="Save As...", accelerator="Ctrl+Shift+S", command=fm.
 fileMenu.add_checkbutton(label="Auto Save")
 
 
-#creating commands for edit menu
+# Creating commands for edit menu
 class EditMenu():
     def Undo(self):
         pass
@@ -137,12 +127,12 @@ class EditMenu():
     def Paste(self):
         pass
     def Find(self):
-        #TODO: use Regex, pop up window maybe, seems like a hassle
+        # TODO: use Regex, pop up window maybe, seems like a hassle
         pass
 
 em = EditMenu()
 
-#creating edit menu
+# Creating edit menu
 editMenu = Menu(toolBar, tearoff=False)
 
 editMenu.add_command(label="Undo", accelerator="Ctrl+Z", command=em.Undo)
@@ -153,7 +143,7 @@ editMenu.add_command(label="Paste", accelerator="Ctrl+V", command=em.Paste)
 editMenu.add_command(label="Find", accelerator="Ctrl+F", command=em.Find)
 
 
-#creating commands for view menu
+# Creating commands for view menu
 class ViewMenu():
     def goFullScreen(self):
         root.attributes("-fullscreen", True)
@@ -166,7 +156,7 @@ class ViewMenu():
 
 vm = ViewMenu()
 
-#creating view menu
+# Creating view menu
 viewMenu = Menu(toolBar, tearoff=False)
 
 editorTheme = Menu(viewMenu, tearoff=False)
@@ -175,18 +165,15 @@ viewMenu.add_checkbutton(label="Enable Mark Errors")
 viewMenu.add_command(label="Create Editor Theme", command=vm.createEditorTheme)
 viewMenu.add_command(label="Import Editor Theme", command=vm.importEditorTheme)
 
-
-# Generating the editor themes out of themes.py
+# Takes theme names out of list and generates them with numbers
 themeNumber = StringVar()
-
-#themeName = themeNames.pop(0)
 i = 0
 for theme in themeNames:
-    editorTheme.add_radiobutton(label=theme[5:], variable=themeNumber, value=str(i), command=SetColours)
+    editorTheme.add_radiobutton(label=theme, variable=themeNumber, value=str(i), command=SetColors)
     i += 1
 
 
-#creating commands for prefrences menu
+# Creating commands for prefrences menu
 class PrefrencesMenu():
     def popupConfigure(self):
         pass
@@ -199,7 +186,7 @@ class PrefrencesMenu():
 
 pm = PrefrencesMenu()
 
-#creating prefrences menu
+# Creating prefrences menu
 prefrencesMenu = Menu(toolBar, tearoff=False)
 
 prefrencesMenu.add_command(label="Configure", command=pm.popupConfigure)
@@ -208,16 +195,16 @@ prefrencesMenu.add_command(label="Shortcuts", command=pm.popupShortcuts)
 prefrencesMenu.add_command(label="Create Extension", command=pm.createEditorExtension)
 
 
-#creating commands for help menu
+# Creating commands for help menu
 class HelpMenu():
     def popupHelp(self):
         pass
 
     def openWelcomeFile(self):
-        content = open('welcome.md', 'r').read()
+        content = open('assets/content/welcome.txt', 'r').read()
         global comp
 
-        #creating the notepad tab
+        # Creating the notepad tab
         Tabs[comp] = Frame(tabs, padx=5, pady=5)       #not finished
         Notepads[comp] = Text(Tabs[comp], padx=500, pady=300)
         Notepads[comp].config(wrap="word", relief=FLAT)
@@ -228,12 +215,12 @@ class HelpMenu():
         Notepads[comp].config(yscrollcommand=scroll.set)
         Notepads[comp].insert(END, content)
 
-        #displaying everything
+        # Displaying everything
         Notepads[comp].pack(fill=BOTH, expand=True)
         Tabs[comp].pack(fill=BOTH, expand=True)
         tabs.add(Tabs[comp], text="Welcome")
     
-        #incremeting the comparison
+        # Incremeting the comparison
         comp += 1
 
     
@@ -245,7 +232,7 @@ class HelpMenu():
 
 hm = HelpMenu()
 
-#creating help menu
+# Creating help menu
 helpMenu = Menu(toolBar, tearoff=False)
 
 helpMenu.add_command(label="Help", accelerator="Ctrl+Shift+H", command=hm.popupHelp)
@@ -255,7 +242,7 @@ helpMenu.add_command(label="How can I contribute?", command=hm.openContributeFil
 helpMenu.add_command(label="How to create editor themes?", command=hm.openContributeFile)
 helpMenu.add_command(label="How to create an extension?", command=hm.openContributeFile)
 
-#adding all the menus to the toolbar
+# Adding all the menus to the toolbar
 toolBar.add_cascade(label="File", menu=fileMenu)
 
 toolBar.add_cascade(label="Edit", menu=editMenu)
@@ -267,24 +254,25 @@ toolBar.add_cascade(label="Prefrences", menu=prefrencesMenu)
 
 toolBar.add_cascade(label="Help", menu=helpMenu)
 
-#displaying the toolbar
+# Displaying the toolbar
 root.config(menu = toolBar)
-#------------------------ending toolbar-----------------------#
+
+#------------------- Ending Toolbar -------------------#
 
 
-#########################creating sidebar########################
+#################### Creating Sidebar ####################
 
-#------------------------ending sidebar-----------------------#
-
-
-#########################creating FileExplorer########################
-
-#------------------------ending FileExplorer-----------------------#
+#------------------- Ending Sidebar -------------------#
 
 
-#########################creating NotePad########################
-#creating tabs
-tabs = ttk.Notebook(root, style='notebook')
+#################### Creating File Explorer ####################
+
+#------------------- Ending File Explorer -------------------#
+
+
+#################### Creating NotePad ####################
+# Creating tabs
+tabs = ttk.Notebook(root, style='TNotebook')
 tabs.pack(pady=10)
 Tabs = {}
 Notepads = {}
@@ -293,7 +281,7 @@ comp = 0
 def createNewTab(fileName):
     global comp
 
-    #creating the notepad tab
+    # Creating the notepad tab
     Tabs[comp] = Frame(tabs, padx=5, pady=5)       #not finished
     Notepads[comp] = Text(Tabs[comp], padx=500, pady=300)
     Notepads[comp].config(wrap="word", relief=FLAT)
@@ -303,27 +291,26 @@ def createNewTab(fileName):
     scroll.config(command=Notepads[comp].yview)
     Notepads[comp].config(yscrollcommand=scroll.set)
 
-    #displaying everything
+    # Displaying everything
     Notepads[comp].pack(fill=BOTH, expand=True)
     Tabs[comp].pack(fill=BOTH, expand=True)
     tabs.add(Tabs[comp], text=fileName)
     
-    #incremeting the comparison
+    # Incremeting the comparison
     comp += 1
 
 hm.openWelcomeFile()
 
-#font family and font size usage
+# Font family and font size usage
 
 ##
-#------------------------ending NotePad-----------------------#
+#------------------- Ending NotePad -------------------#
 
 
-#########################creating console########################
+#################### Creating Terminal ####################
 
-#------------------------ending console-----------------------#
+#------------------- Ending Terminal  -------------------#
 
 
-
-#running main loop
+# Running main loop
 root.mainloop()

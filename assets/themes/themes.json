@@ -2,7 +2,7 @@
     "Names" : "Light,Dark",
 
     "Light" : {
-        "Color1": "#ffffff",
+        "Color1": "#ffffff", 
         "Color2": "#000000",
         "Color3": "#1d1d1d",
         "Color4": "#ffffff",
